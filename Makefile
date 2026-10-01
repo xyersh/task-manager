@@ -11,7 +11,7 @@ env-up:
 
 # остановка сервиса
 env-down:
-	docker compose down task-manager-postgres
+	@docker compose down task-manager-postgres
 
 # полная очистка БД
 env-cleanup:
@@ -31,12 +31,34 @@ migrate-create:
 		echo "отсуствует необходимый параметр \`seq\`. Пример: make migrate-create seq=init"; \
 		exit 1; \
 	fi
-	MSYS2_ARG_CONV_EXCL="*" docker compose run --rm task-manager-migrate create \
+	@docker compose run --rm task-manager-migrate create \
 		-ext sql \
 		-dir ${PROJECT_ROOT}/migrations \
 		-seq "$(seq)"
 
 
 
+migrate-action:
+	@if [ -z "\$(seq)" ]; then \
+		echo "отсуствует необходимый параметр \`action\`. Пример: make migrate-action action="up 1"; \
+		exit 1; \
+	fi
+
+
+	@docker compose run -rm task-manager-migrate \
+		-path /migrations \
+		-database postgres://${POSTGRES_USER}:${POSTGESS_PASSWORD}@task-manager-postgres:5432/${POSTGRES_DB}?sslmode=disable \
+		"$(action)" 	
+
+migrate-up:
+	@make migrate-action action=up
+
+migrate-down:
+	@make migrate-action action=down
+
+
+
+
 test-target:
 	@echo "value: $(var)"
+	@echo "PROJECT_ROOT: ${PROJECT_ROOT}"
