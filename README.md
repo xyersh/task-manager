@@ -6,23 +6,23 @@
 | COLUMN | ATTRS | DESC | 
 |--|--|--|
 |id |SERIAL PRIMERY KEY | ID|
-|version | BIGINT NOT NULL | версионирование записи для реализации оптимистичной блокировки |
-| full_name | VARCHAR(100) NOT NULL | ФИО |
-| phone | VARCHAR(20) NOT NULL UNIQUE | телефон |
-| email | VARCHAR(50) | почта | 
+|version | BIGINT NOT NULL DEFAULT 1 | версионирование записи для реализации оптимистичной блокировки |
+| full_name | VARCHAR(100) NOT NULL | ФИО. Длина от 3 до 100 символов |
+| phone | VARCHAR(20) NOT NULL UNIQUE | телефон. Проверка на валидность |
+| email | VARCHAR(50) | почта. NULL или валидное значение | 
 
 
 ### TASKS
 |COLUMN | ATTRS | DESC |
 |--|--|--|
 | id | SERIAL | id |
-| version | BIGINT | версия записи для оптимистичной блокировки |
-| title|VARCHAR(100) NOT NULL | заголовок задачи |
+| version | BIGINT DEFAULT 1| версия записи для оптимистичной блокировки |
+| title|VARCHAR(100) NOT NULL | заголовок задачи. Длина от 1 до 100 символов |
 | description | VARCHAR(1000) | описание задачи |
 | completed | BOOLEAN NOT NULL | завершена |
 | created_at | TIMESTAMPTZ NOT NULL| время/время создания задачи |
-| completed_at | TIMESTAMPTZ | дата/время завершения задачи |
-| autor_user_id | INTEGER |
+| completed_at | TIMESTAMPTZ | дата/время завершения задачи. NULL если completed=fasle, ИЛИ  >= чем created_at если completed=true |
+| autor_user_id | INTEGER |  NULL, ИЛИ валидный EMAIL |
 
 
 ## API
