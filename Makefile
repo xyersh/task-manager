@@ -24,23 +24,31 @@ env-cleanup:
 		echo "Очистка окружения отменена"; \
 	fi
 
+env-port-forward:
+	@docker compose up -d port-forwarder
+
+
+env-port-down:
+	@docker compose down port-forwarder
+
+
 
 # создать файлы миграции
 migrate-create:
-	@if [ -z "\$(seq)" ]; then \
-		echo "отсуствует необходимый параметр \`seq\`. Пример: make migrate-create seq=init"; \
+	@if [ -z "$(seq)" ]; then \
+		echo 'отсуствует необходимый параметр "seq". Пример: make migrate-create seq=init'; \
 		exit 1; \
 	fi
 	@docker compose run --rm task-manager-migrate create \
 		-ext sql \
-		-dir ${PROJECT_ROOT}/migrations \
+		-dir ./migrations \
 		-seq "$(seq)"
 
 
 # up/down миграции 
 migrate-action:
 	@if [ -z "\$(action)" ]; then \
-		echo "отсуствует необходимый параметр \`action\`. Пример: make migrate-action action= \"up 1\""; \
+		echo "отсуствует необходимый параметр \`action\`. Пример: make migrate-action action= up 1"; \
 		exit 1; \
 	fi
 	@docker compose run --rm task-manager-migrate \
